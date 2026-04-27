@@ -3,6 +3,10 @@ using UnityEngine.InputSystem;
 
 public class ShipCombat : MonoBehaviour
 {
+    [Header("Cameras")]
+    public GameObject leftAimCamera;
+    public GameObject rightAimCamera;
+
     [Header("Weapons Setup")]
     public GameObject cannonballPrefab;
     public Transform[] leftCannons;
@@ -10,22 +14,36 @@ public class ShipCombat : MonoBehaviour
 
     [Header("Firing Stats")]
     public float fireForce = 3000f;
-    public float upwardArc = 0.15f; // Gives the shot a slight parabolic arc
+    public float upwardArc = 0.15f; 
+
+    private bool isAimingLeft;
+    private bool isAimingRight;
 
     void Update()
     {
-        if (Keyboard.current == null) return;
+        if (Keyboard.current == null || Mouse.current == null) return;
 
-        // Fire Left Broadside (Q Key)
-        if (Keyboard.current.qKey.wasPressedThisFrame)
-        {
-            FireCannons(leftCannons, -transform.right);
-        }
+        // 1. Read the Mouse Buttons
+        isAimingLeft = Mouse.current.leftButton.isPressed;
+        isAimingRight = Mouse.current.rightButton.isPressed;
 
-        // Fire Right Broadside (E Key)
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        // 2. Toggle the Cameras
+        // Cinemachine automatically blends smoothly when a camera is turned on/off!
+        if (leftAimCamera != null) leftAimCamera.SetActive(isAimingLeft);
+        if (rightAimCamera != null) rightAimCamera.SetActive(isAimingRight);
+
+        // 3. Fire the cannons!
+        // Press Spacebar to fire, but ONLY if you are currently aiming a side.
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            FireCannons(rightCannons, transform.right);
+            if (isAimingLeft)
+            {
+                FireCannons(leftCannons, -transform.right);
+            }
+            else if (isAimingRight)
+            {
+                FireCannons(rightCannons, transform.right);
+            }
         }
     }
 
@@ -33,19 +51,15 @@ public class ShipCombat : MonoBehaviour
     {
         foreach (Transform spawnPoint in spawnPoints)
         {
-            // 1. Spawn a cannonball at each point
             GameObject ball = Instantiate(cannonballPrefab, spawnPoint.position, spawnPoint.rotation);
             
-            // 2. Grab its physics component
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                // 3. Add explosive force! (Direction + a slight upward tilt)
                 Vector3 fireVector = direction + (Vector3.up * upwardArc);
                 rb.AddForce(fireVector.normalized * fireForce);
             }
             
-            // 4. Destroy the ball after 5 seconds so it doesn't lag the game
             Destroy(ball, 5f);
         }
     }
