@@ -85,5 +85,6 @@ public class EnemyHealth : MonoBehaviour
         }
 
         Destroy(gameObject, 15f);
+        FindAnyObjectByType<GameManager>().TriggerVictory();
     }
 }
