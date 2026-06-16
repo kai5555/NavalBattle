@@ -74,8 +74,21 @@ public class PlayerHealth : MonoBehaviour
 
     }
 
-    void Update()
+    public void Heal(int amount)
     {
-        
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        if (healthSlider != null) healthSlider.value = currentHealth;
+    }
+
+    public void UpgradeMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth += amount; // Heal them for the amount they upgraded too
+        if (healthSlider != null) 
+        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
+        }
     }
 }

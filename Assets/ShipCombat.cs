@@ -24,6 +24,9 @@ public class ShipCombat : MonoBehaviour
     [Header("Firing Stats")]
     public float fireVelocity = 30f;
 
+    [Header("Audio")]
+    public AudioClip cannonFireSound;
+
     private bool isAimingLeft;
     private bool isAimingRight;
 
@@ -123,7 +126,16 @@ public class ShipCombat : MonoBehaviour
         foreach (Transform spawnPoint in spawnPoints)
         {
             GameObject ball = Instantiate(cannonballPrefab, spawnPoint.position, spawnPoint.rotation);
+            if (cannonFireSound != null)
+            {
+                AudioSource.PlayClipAtPoint(cannonFireSound, spawnPoint.position);
+            }
             Rigidbody rb = ball.GetComponent<Rigidbody>();
+            SmugglingManager manager = GetComponent<SmugglingManager>();
+            if (manager != null)
+            {
+                ball.GetComponent<CannonballImpact>().baseDamage = 25 + manager.bonusDamage;
+            }
             
             if (rb != null)
             {

@@ -65,6 +65,18 @@ public class EnemyHealth : MonoBehaviour
 
     void Sink()
     {
+        Debug.Log("Enemy Ship Destroyed!");
+
+        // 1. We removed the GameManager.TriggerVictory() line!
+        
+        // 2. NEW: The Bounty System! Give the player gold for sinking them.
+        SmugglingManager playerEconomy = FindAnyObjectByType<SmugglingManager>();
+        if (playerEconomy != null)
+        {
+            int bounty = Random.Range(100, 200); // Random reward between 100 and 200
+            playerEconomy.gold += bounty;
+            Debug.Log("Claimed Pirate Bounty: " + bounty + " Gold! Total: " + playerEconomy.gold);
+        }
         // Hide the health bar when the ship dies
         if (healthCanvas != null) healthCanvas.gameObject.SetActive(false);
 
@@ -85,6 +97,5 @@ public class EnemyHealth : MonoBehaviour
         }
 
         Destroy(gameObject, 15f);
-        FindAnyObjectByType<GameManager>().TriggerVictory();
     }
 }

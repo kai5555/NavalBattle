@@ -15,6 +15,9 @@ public class EnemyAI : MonoBehaviour
     public float fireVelocity = 35f;
     public float fireCooldown = 4f;    // Seconds between volleys
 
+    [Header("Audio")]
+    public AudioClip cannonFireSound;
+
     private float nextFireTime = 0f;
     private AdvancedBuoyancy buoyancyScript;
 
@@ -94,6 +97,10 @@ public class EnemyAI : MonoBehaviour
         foreach (Transform spawnPoint in spawnPoints)
         {
             GameObject ball = Instantiate(cannonballPrefab, spawnPoint.position, spawnPoint.rotation);
+            if (cannonFireSound != null)
+            {
+                AudioSource.PlayClipAtPoint(cannonFireSound, spawnPoint.position);
+            }
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             Collider ballCollider = ball.GetComponent<Collider>();
 

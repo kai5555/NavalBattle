@@ -14,6 +14,8 @@ public class CannonballImpact : MonoBehaviour
     private bool hasSplashed = false; 
     private float spawnTime; 
 
+    public int baseDamage = 25;
+
     void Start()
     {
         spawnTime = Time.time;
@@ -53,7 +55,7 @@ public class CannonballImpact : MonoBehaviour
         EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
         if (enemy != null)
         {
-            enemy.TakeDamage(25); 
+            enemy.TakeDamage(baseDamage); 
             hitAShip = true;
         }
 
