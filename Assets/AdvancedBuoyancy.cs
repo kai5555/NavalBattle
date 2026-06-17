@@ -38,14 +38,12 @@ public class AdvancedBuoyancy : MonoBehaviour
 
         float averageHeight = (frontHeight + backHeight + rightHeight + leftHeight) / 4f;
 
-        // Multiply by waveResistance to reduce the extreme angles!
         float pitchAngle = Mathf.Atan2(frontHeight - backHeight, shipLength * 2) * Mathf.Rad2Deg * waveResistance;
         float rollAngle = Mathf.Atan2(leftHeight - rightHeight, shipWidth * 2) * Mathf.Rad2Deg * waveResistance;
 
         transform.position = new Vector3(transform.position.x, averageHeight + floatHeightOffset, transform.position.z);
         
         Quaternion targetRotation = Quaternion.Euler(pitchAngle, transform.rotation.eulerAngles.y, rollAngle);
-        // Use rockingSluggishness to make the ship react slower to the waves
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rockingSluggishness);
     }
 }

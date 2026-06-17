@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // NEW: Tells the script to use the New Input System!
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class SmugglingManager : MonoBehaviour
@@ -16,7 +16,7 @@ public class SmugglingManager : MonoBehaviour
 
     [Header("References")]
     public PlayerHealth healthScript;
-    public Transform navigationArrow; // NEW: The 3D Compass Arrow!
+    public Transform navigationArrow;
 
     [Header("UI Elements")]
     public TextMeshProUGUI goldText;
@@ -27,16 +27,15 @@ public class SmugglingManager : MonoBehaviour
     public AudioClip coinSound;
     private AudioSource uiAudioSpeaker;
 
-    // This must match the exact names of your islands in the Hierarchy!
     private string[] allIslands = { "Island_Nassau", "Island_Tortuga", "Island_Havana" };
     private bool isInPort = false;
-    private Transform currentTargetTransform; // NEW: Stores the exact coordinates of the target island
+    private Transform currentTargetTransform;
 
     void Start()
     {
         uiAudioSpeaker = gameObject.AddComponent<AudioSource>();
         UpdateUI();
-        if (shopPromptText != null) shopPromptText.enabled = false; // Hide shop at start\
+        if (shopPromptText != null) shopPromptText.enabled = false;
         if (navigationArrow != null) 
         {
             navigationArrow.gameObject.SetActive(false);
@@ -47,34 +46,29 @@ public class SmugglingManager : MonoBehaviour
     {
         if (navigationArrow != null && currentTargetTransform != null)
         {
-            // Find where the island is
+            // Find where island is
             Vector3 targetPos = currentTargetTransform.position;
-            // Lock the Y axis so the arrow stays perfectly flat and doesn't tilt into the sky/water!
+            // Lock the Y axis so arrow stays perfectly flat and doesnt tilt into water.
             targetPos.y = navigationArrow.position.y; 
-            // Force the arrow to point at the target
+            // Force arrow to point at target island
             navigationArrow.LookAt(targetPos);
         }
-        // Safety check to ensure a keyboard is plugged in before reading inputs
         if (Keyboard.current == null) return;
 
-        // --- THE UPGRADE SHOP ---
         if (isInPort)
         {
-            // [1] Repair Ship
             if (Keyboard.current.digit1Key.wasPressedThisFrame && gold >= repairCost)
             {
                 healthScript.Heal(100);
                 gold -= repairCost;
                 UpdateUI();
             }
-            // [2] Upgrade Max Health
             if (Keyboard.current.digit2Key.wasPressedThisFrame && gold >= healthUpgradeCost)
             {
                 healthScript.UpgradeMaxHealth(100);
                 gold -= healthUpgradeCost;
                 UpdateUI();
             }
-            // [3] Upgrade Cannon Damage
             if (Keyboard.current.digit3Key.wasPressedThisFrame && gold >= damageUpgradeCost)
             {
                 bonusDamage += 10;
@@ -106,14 +100,14 @@ public class SmugglingManager : MonoBehaviour
                 gold += reward;
                 currentDestination = "None";
                 UpdateUI();
-                if (coinSound != null) uiAudioSpeaker.PlayOneShot(coinSound); // NEW!
+                if (coinSound != null) uiAudioSpeaker.PlayOneShot(coinSound);
                 if (PopupManager.Instance != null)
                 {
                     PopupManager.Instance.ShowPopup("Delivery Success! +" + reward + " Gold");
                 }
             }
 
-            // Assign a new mission if we don't have one
+            // Assign new mission if we don't have one
             if (currentDestination == "None")
             {
                 AssignNewMission(portName);
@@ -126,14 +120,14 @@ public class SmugglingManager : MonoBehaviour
         if (other.CompareTag("Port"))
         {
             isInPort = false;
-            if (shopPromptText != null) shopPromptText.enabled = false; // Hide shop prompt
+            if (shopPromptText != null) shopPromptText.enabled = false;
         }
     }
 
     void AssignNewMission(string currentPort)
     {
         string newTarget = currentPort;
-        // Keep picking a random island until it is NOT the one we are currently at
+        // Keep picking random island until not the one player is currently at
         while (newTarget == currentPort)
         {
             newTarget = allIslands[Random.Range(0, allIslands.Length)];
@@ -145,7 +139,7 @@ public class SmugglingManager : MonoBehaviour
         if (targetObj != null)
         {
             currentTargetTransform = targetObj.transform;
-            if (navigationArrow != null) navigationArrow.gameObject.SetActive(true); // Turn arrow on
+            if (navigationArrow != null) navigationArrow.gameObject.SetActive(true); 
         }
     }
 }

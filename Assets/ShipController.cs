@@ -10,7 +10,6 @@ public class ShipController : MonoBehaviour
     [Tooltip("Lower number means it takes longer to reach top speed")]
     public float acceleration = 1.5f; 
 
-    // These store the actual current momentum of the ship
     private float currentSpeed = 0f;
     private float currentTurn = 0f;
 
@@ -28,7 +27,7 @@ public class ShipController : MonoBehaviour
             if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) targetSteer = -1f;
         }
 
-        // SMOOTHING: Gradually blend current speed towards the target speed
+        // Smoothly interpolate current speed and turn based on target inputs
         currentSpeed = Mathf.Lerp(currentSpeed, targetThrottle * topSpeed, Time.deltaTime * acceleration);
         currentTurn = Mathf.Lerp(currentTurn, targetSteer * turnSpeed, Time.deltaTime * acceleration);
 

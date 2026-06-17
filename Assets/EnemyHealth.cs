@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // We need this line to talk to the UI!
+using UnityEngine.UI;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -8,8 +8,8 @@ public class EnemyHealth : MonoBehaviour
     private int currentHealth;
 
     [Header("UI")]
-    public Slider healthSlider;     // The visual bar
-    public Transform healthCanvas;  // The canvas we need to rotate
+    public Slider healthSlider;  
+    public Transform healthCanvas;
 
     private AdvancedBuoyancy buoyancyScript;
     private Rigidbody rb;
@@ -19,7 +19,7 @@ public class EnemyHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         
-        // Setup the UI slider at the start
+        // Setup UI slider
         if (healthSlider != null)
         {
             healthSlider.maxValue = maxHealth;
@@ -37,7 +37,7 @@ public class EnemyHealth : MonoBehaviour
 
     void Update()
     {
-        // BILLBOARD EFFECT: Make the canvas always face the camera
+        // Make canvas always face the camera
         if (healthCanvas != null && playerCamera != null)
         {
             healthCanvas.LookAt(healthCanvas.position + playerCamera.rotation * Vector3.forward,
@@ -51,7 +51,7 @@ public class EnemyHealth : MonoBehaviour
 
         currentHealth -= damageAmount;
 
-        // Update the visual slider
+        // Update visual slider
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;
@@ -66,28 +66,26 @@ public class EnemyHealth : MonoBehaviour
     void Sink()
     {
         Debug.Log("Enemy Ship Destroyed!");
-
-        // 1. We removed the GameManager.TriggerVictory() line!
         
-        // 2. NEW: The Bounty System! Give the player gold for sinking them.
+        // Bounty system
         SmugglingManager playerEconomy = FindAnyObjectByType<SmugglingManager>();
         if (playerEconomy != null)
         {
-            int bounty = Random.Range(100, 200); // Random reward between 100 and 200
+            int bounty = Random.Range(100, 200);
             playerEconomy.gold += bounty;
             Debug.Log("Claimed Pirate Bounty: " + bounty + " Gold! Total: " + playerEconomy.gold);
         }
-        // Hide the health bar when the ship dies
+        // Hide health bar when dead
         if (healthCanvas != null) healthCanvas.gameObject.SetActive(false);
 
         if (buoyancyScript != null) buoyancyScript.enabled = false;
 
         if (rb != null)
         {
-            rb.isKinematic = false; 
-            rb.mass = 5000f; 
-            rb.linearDamping = 2.5f;  
-            rb.angularDamping = 1.5f;
+            rb.isKinematic = false; // Allow physics to take over
+            rb.mass = 5000f; // Make it heavy so it sinks
+            rb.linearDamping = 2.5f;  // dampen movement to simulate water resistance
+            rb.angularDamping = 1.5f; // dampen rotation to simulate water resistance
 
             float randomRoll = Random.Range(-1f, 1f);
             float randomPitch = Random.Range(-1f, 1f);

@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem; // Needed to read the Escape key!
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
     [Header("UI Panels")]
     public GameObject gameOverPanel;
-    public GameObject pausePanel; // NEW: The Pause Menu
+    public GameObject pausePanel;
 
     private bool isPaused = false;
 
@@ -17,13 +17,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // Safety check
         if (Keyboard.current == null) return;
 
-        // If we press ESCAPE...
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            // Don't allow pausing if the player is already dead!
+            // Don't allow pausing if player is dead
             if (gameOverPanel != null && gameOverPanel.activeSelf) return;
 
             TogglePause();
@@ -38,12 +36,12 @@ public class GameManager : MonoBehaviour
 
         if (isPaused)
         {
-            Time.timeScale = 0f; // FREEZES THE GAME!
+            Time.timeScale = 0f; // freeze game
             UnlockCursor();
         }
         else
         {
-            Time.timeScale = 1f; // UNFREEZES THE GAME!
+            Time.timeScale = 1f; // unfreeze
             LockCursor(); 
         }
     }
@@ -65,8 +63,6 @@ public class GameManager : MonoBehaviour
 
     public void QuitToTitle()
     {
-        // CRUCIAL: Always unfreeze time before loading a new level, 
-        // or your Main Menu will be permanently frozen!
         Time.timeScale = 1f; 
         SceneManager.LoadScene("MainMenu"); 
     }

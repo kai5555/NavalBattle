@@ -23,17 +23,17 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
-        // 1. Automatically find the player in the scene!
+        // find the player
         ShipController player = FindAnyObjectByType<ShipController>();
         if (player != null) playerTarget = player.transform;
 
-        // Grab the buoyancy script. We will use this to know if we are dead!
+        // Grab buoyancy script, use this to know if dead
         buoyancyScript = GetComponent<AdvancedBuoyancy>();
     }
 
     void Update()
     {
-        // If buoyancy is turned off, we are sinking! Stop driving and shooting.
+        // If buoyancy is turned off, we are sinking. Stop driving and shooting.
         if (buoyancyScript != null && !buoyancyScript.enabled) return;
         
         // If there is no player to fight, just sit there.
@@ -45,7 +45,7 @@ public class EnemyAI : MonoBehaviour
 
         Vector3 targetDirection;
 
-        // --- NAVIGATION LOGIC ---
+
         if (distanceToPlayer > combatDistance)
         {
             // CHASE MODE: Point the nose directly at the player
@@ -54,11 +54,10 @@ public class EnemyAI : MonoBehaviour
         else
         {
             // BROADSIDE MODE: Use Vector Math to calculate a 90-degree angle from the player
-            // This makes the AI try to sail in a perfect circle around you!
+            // makes AI try to sail in perfect circle around player
             targetDirection = Vector3.Cross(Vector3.up, directionToPlayer);
         }
 
-        // --- STEERING AND MOVEMENT ---
         // Calculate how hard to turn the steering wheel to reach the target direction
         float angleToTarget = Vector3.SignedAngle(transform.forward, targetDirection, Vector3.up);
         float steerInput = Mathf.Clamp(angleToTarget / 30f, -1f, 1f); 
@@ -66,7 +65,6 @@ public class EnemyAI : MonoBehaviour
         transform.Rotate(Vector3.up * steerInput * turnSpeed * Time.deltaTime);
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
 
-        // --- FIRING LOGIC ---
         if (Time.time >= nextFireTime)
         {
             CheckAndFireBroadside(directionToPlayer);
@@ -75,13 +73,13 @@ public class EnemyAI : MonoBehaviour
 
     void CheckAndFireBroadside(Vector3 directionToPlayer)
     {
-        // Is the player directly to our Right? (Within a 15-degree viewing cone)
+        // Is player to the right? (in a 15-degree viewing cone)
         if (Vector3.Angle(transform.right, directionToPlayer) < 15f) 
         {
             FireCannons(rightCannons, transform.right);
             nextFireTime = Time.time + fireCooldown; // Reset the reload timer
         }
-        // Is the player directly to our Left?
+        // Is player to the Left?
         else if (Vector3.Angle(-transform.right, directionToPlayer) < 15f)
         {
             FireCannons(leftCannons, -transform.right);
@@ -91,7 +89,7 @@ public class EnemyAI : MonoBehaviour
 
     void FireCannons(Transform[] spawnPoints, Vector3 fireDirection)
     {
-        // NEW: Grab EVERY collider attached to this ship and its children
+        // Grab EVERY collider attached to this ship and its children
         Collider[] myColliders = GetComponentsInChildren<Collider>(); 
 
         foreach (Transform spawnPoint in spawnPoints)
@@ -104,7 +102,7 @@ public class EnemyAI : MonoBehaviour
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             Collider ballCollider = ball.GetComponent<Collider>();
 
-            // NEW: Loop through all the ship's parts and ignore them
+            // Loop through all the ship's parts and ignore them to not hit own ship
             if (ballCollider != null)
             {
                 foreach (Collider shipPart in myColliders)

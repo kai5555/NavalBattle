@@ -29,7 +29,7 @@ public class PlayerHealth : MonoBehaviour
         buoyancyScript = GetComponent<AdvancedBuoyancy>();
         rb = GetComponent<Rigidbody>();
         if(rb == null) rb = gameObject.AddComponent<Rigidbody>();
-        rb.isKinematic = true; // Make the Rigidbody kinematic to prevent physics interactions
+        rb.isKinematic = true; // prevent physics
     }
 
     public void TakeDamage(int damage)
@@ -53,14 +53,14 @@ public class PlayerHealth : MonoBehaviour
     void Sink()
     {
         Debug.Log("Player ship has sunk!");
-        // Disable player controls
+        // disable controls
         if (movementScript != null) movementScript.enabled = false;
         if (combatScript != null) combatScript.enabled = false;
         if (buoyancyScript != null) buoyancyScript.enabled = false;
 
         if (rb != null)
         {
-            rb.isKinematic = false; // Allow physics to take over for sinking
+            rb.isKinematic = false;
             rb.mass = 5000f;
             rb.linearDamping = 2.5f;
             rb.angularDamping = 1.5f;
@@ -84,7 +84,7 @@ public class PlayerHealth : MonoBehaviour
     public void UpgradeMaxHealth(int amount)
     {
         maxHealth += amount;
-        currentHealth += amount; // Heal them for the amount they upgraded too
+        currentHealth += amount;
         if (healthSlider != null) 
         {
             healthSlider.maxValue = maxHealth;

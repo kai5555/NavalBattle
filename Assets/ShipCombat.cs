@@ -97,6 +97,7 @@ public class ShipCombat : MonoBehaviour
         }
     }
 
+    // Draws the predicted trajectory of the cannonball based on current aiming direction and elevation
     void DrawTrajectory(Transform startPoint, Vector3 direction)
     {
         trajectoryLine.positionCount = trajectoryPoints;
@@ -109,10 +110,10 @@ public class ShipCombat : MonoBehaviour
         for (int i = 0; i < trajectoryPoints; i++)
         {
             trajectoryLine.SetPosition(i, currentPosition);
-            
+            // Update the position and velocity for the next point in trajectory
             currentVelocity += Physics.gravity * timeBetweenPoints;
             currentPosition += currentVelocity * timeBetweenPoints;
-
+            // Stop drawing if the trajectory goes below the water level (y < 0)
             if (currentPosition.y < 0f) 
             {
                 trajectoryLine.positionCount = i + 1;
